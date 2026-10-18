@@ -353,7 +353,6 @@
         const billingDay = parseInt(document.getElementById('billingDay').value, 10);
 
         if (!title || isNaN(amount) || amount <= 0) {
-            alert("Please enter a valid title and amount.");
             return false;
         }
 
@@ -370,17 +369,13 @@
 
         const jsonString = JSON.stringify(payload);
 
-        // Debug alert to confirm function is reached
-        alert("Sending payload: " + jsonString);
-
+        // Execute Telegram WebApp SDK directly without blocking alerts
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.sendData(jsonString);
             window.Telegram.WebApp.close();
-        } else {
-            alert("Error: Telegram WebApp SDK not initialized.");
         }
     } catch (err) {
-        alert("JavaScript Error: " + err.message);
+        console.error("Submission error:", err);
     }
 
     return false;
