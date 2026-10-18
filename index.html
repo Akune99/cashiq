@@ -342,48 +342,49 @@
         document.getElementById('formModal').style.display = 'none';
     }
 
-    function handleSubmit(e) {
-        // Prevent form from re-loading the page
-        if (e && e.preventDefault) e.preventDefault();
+   function handleSubmit(e) {
+    if (e && e.preventDefault) e.preventDefault();
 
-        try {
-            const id = document.getElementById('editId').value;
-            const title = document.getElementById('title').value.trim();
-            const amount = parseFloat(document.getElementById('amount').value);
-            const frequency = document.getElementById('frequency').value;
-            const billingDay = parseInt(document.getElementById('billingDay').value, 10);
+    try {
+        const id = document.getElementById('editId').value;
+        const title = document.getElementById('title').value.trim();
+        const amount = parseFloat(document.getElementById('amount').value);
+        const frequency = document.getElementById('frequency').value;
+        const billingDay = parseInt(document.getElementById('billingDay').value, 10);
 
-            if (!title || isNaN(amount) || amount <= 0) {
-                alert("Please enter a valid title and amount.");
-                return false;
-            }
-
-            const payload = {
-                action: id ? 'update' : 'create',
-                data: {
-                    id: id ? parseInt(id, 10) : Date.now(),
-                    title: title,
-                    amount: amount,
-                    frequency: frequency,
-                    billingDay: billingDay
-                }
-            };
-
-            // Convert to string payload
-            const stringPayload = JSON.stringify(payload);
-
-            // Send payload to Telegram Bot
-            tg.sendData(stringPayload);
-
-            // Close the Web App window
-            tg.close();
-        } catch (err) {
-            alert("Error sending data to Telegram: " + err.message);
+        if (!title || isNaN(amount) || amount <= 0) {
+            alert("Please enter a valid title and amount.");
+            return false;
         }
 
-        return false;
+        const payload = {
+            action: id ? 'update' : 'create',
+            data: {
+                id: id ? parseInt(id, 10) : Date.now(),
+                title: title,
+                amount: amount,
+                frequency: frequency,
+                billingDay: billingDay
+            }
+        };
+
+        const jsonString = JSON.stringify(payload);
+
+        // Debug alert to confirm function is reached
+        alert("Sending payload: " + jsonString);
+
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.sendData(jsonString);
+            window.Telegram.WebApp.close();
+        } else {
+            alert("Error: Telegram WebApp SDK not initialized.");
+        }
+    } catch (err) {
+        alert("JavaScript Error: " + err.message);
     }
 
+    return false;
+}
     function editItem(id) {
         const item = expenses.find(e => e.id === id);
         if (item) openModal(item);
