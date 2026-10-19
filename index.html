@@ -1,3 +1,8 @@
+Here is the complete, updated `index.html` file.
+
+All date handling has been updated to treat `item.date` strictly as a raw string coming straight from your `Code in JavaScript3` node output, and any default date setting uses local time (`en-CA` format) instead of `new Date().toISOString()`, preventing the UTC shift back to 19 Oct:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -140,9 +145,12 @@
     const telegramId = user?.id || '';
     const username = user?.username || user?.first_name || '';
 
+    // Helper: Returns local YYYY-MM-DD date string without UTC time zone shifting
+    const getLocalToday = () => new Date().toLocaleDateString('en-CA');
+
     document.getElementById('telegram_id').value = telegramId;
     document.getElementById('username').value = username;
-    document.getElementById('date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('date').value = getLocalToday();
 
     let expensesCache = [];
 
@@ -191,7 +199,10 @@
             return;
         }
 
-        container.innerHTML = items.map(item => `
+        container.innerHTML = items.map(item => {
+            // Read raw date string directly from database output
+            const rawDate = item.date ? String(item.date).split('T')[0] : '';
+            return `
             <div class="card">
                 <div class="expense-item">
                     <div>
@@ -200,7 +211,7 @@
                     </div>
                     <div>
                         <div class="expense-amount">$${parseFloat(item.amount).toFixed(2)}</div>
-                        <div class="expense-sub">${item.date || ''}</div>
+                        <div class="expense-sub">${rawDate}</div>
                     </div>
                 </div>
                 <div class="action-btns">
@@ -208,7 +219,8 @@
                     <button class="btn-sm btn-delete" onclick="confirmDelete('${item.id}', '${item.title}')">🗑️ Delete</button>
                 </div>
             </div>
-        `).join('');
+        `;
+        }).join('');
     }
 
     // Prepare Form for Editing
@@ -221,7 +233,9 @@
         document.getElementById('amount').value = item.amount;
         document.getElementById('category').value = item.category;
         document.getElementById('frequency').value = item.frequency;
-        document.getElementById('date').value = item.date || new Date().toISOString().split('T')[0];
+        
+        // Pass string directly from item.date without Date object conversion
+        document.getElementById('date').value = item.date ? String(item.date).split('T')[0] : getLocalToday();
 
         document.getElementById('formTitle').innerText = 'Edit Expense';
         document.getElementById('submitBtn').innerText = 'Update Expense';
@@ -236,7 +250,7 @@
         document.getElementById('expenseForm').reset();
         document.getElementById('telegram_id').value = telegramId;
         document.getElementById('username').value = username;
-        document.getElementById('date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = getLocalToday();
 
         document.getElementById('formTitle').innerText = 'Add Expense';
         document.getElementById('submitBtn').innerText = 'Save Expense';
@@ -333,3 +347,5 @@
 
 </body>
 </html>
+
+```
