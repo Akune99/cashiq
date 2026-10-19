@@ -118,8 +118,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="start_date">Start Date</label>
-                        <input type="date" id="start_date" name="start_date" required>
+                        <label for="date">Date</label>
+                        <input type="date" id="date" name="date" required>
                     </div>
                 </div>
 
@@ -142,7 +142,7 @@
 
     document.getElementById('telegram_id').value = telegramId;
     document.getElementById('username').value = username;
-    document.getElementById('start_date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('date').value = new Date().toISOString().split('T')[0];
 
     let expensesCache = [];
 
@@ -200,7 +200,7 @@
                     </div>
                     <div>
                         <div class="expense-amount">$${parseFloat(item.amount).toFixed(2)}</div>
-                        <div class="expense-sub">${item.start_date || ''}</div>
+                        <div class="expense-sub">${item.date || ''}</div>
                     </div>
                 </div>
                 <div class="action-btns">
@@ -221,7 +221,7 @@
         document.getElementById('amount').value = item.amount;
         document.getElementById('category').value = item.category;
         document.getElementById('frequency').value = item.frequency;
-        document.getElementById('start_date').value = item.start_date || new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = item.date || new Date().toISOString().split('T')[0];
 
         document.getElementById('formTitle').innerText = 'Edit Expense';
         document.getElementById('submitBtn').innerText = 'Update Expense';
@@ -236,7 +236,7 @@
         document.getElementById('expenseForm').reset();
         document.getElementById('telegram_id').value = telegramId;
         document.getElementById('username').value = username;
-        document.getElementById('start_date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = new Date().toISOString().split('T')[0];
 
         document.getElementById('formTitle').innerText = 'Add Expense';
         document.getElementById('submitBtn').innerText = 'Save Expense';
@@ -295,7 +295,7 @@
             amount: parseFloat(document.getElementById('amount').value),
             category: document.getElementById('category').value,
             frequency: document.getElementById('frequency').value,
-            start_date: document.getElementById('start_date').value
+            date: document.getElementById('date').value
         };
 
         try {
