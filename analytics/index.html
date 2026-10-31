@@ -51,67 +51,56 @@
     </select>
   </header>
 
-  <!-- TAB NAVIGATION BAR -->
-  <div class="max-w-lg mx-auto px-4 pt-3">
-    <div class="flex bg-[#18222d] p-1 rounded-xl border border-gray-800">
-      <button id="tabOverviewBtn" onclick="switchTab('overview')" class="flex-1 py-1.5 text-xs font-semibold rounded-lg text-cyan-300 bg-[#212d3b] border border-cyan-500/30 transition-all flex items-center justify-center gap-1.5 shadow-sm">
-        <i data-lucide="pie-chart" class="w-3.5 h-3.5"></i> Categories & KPIs
-      </button>
-      <button id="tabLedgerBtn" onclick="switchTab('ledger')" class="flex-1 py-1.5 text-xs font-semibold rounded-lg text-gray-400 hover:text-gray-200 transition-all flex items-center justify-center gap-1.5">
-        <i data-lucide="receipt" class="w-3.5 h-3.5"></i> Itemized Ledger
-      </button>
-    </div>
-  </div>
-
-  <!-- MAIN CONTAINER -->
+  <!-- MAIN CONTAINER (SINGLE TAB) -->
   <main class="max-w-lg mx-auto px-4 pt-3 space-y-4">
 
-    <!-- TAB 1: OVERVIEW & PIE CHART -->
-    <div id="tabOverview" class="space-y-4">
-      <!-- TOP 4 LIVE KPI BOXES -->
-      <div class="grid grid-cols-2 gap-2.5">
-        <div class="bg-[#212d3b] p-3 rounded-xl border border-gray-800/80 shadow-sm">
-          <p class="text-[11px] font-medium text-gray-400">Total Spent</p>
-          <p id="kpiTotal" class="text-xl font-bold text-white mt-0.5">Loading...</p>
-          <div class="mt-1 flex items-center text-[10px] text-cyan-400 font-medium">
-            <i data-lucide="database" class="w-3 h-3 mr-1"></i> Live from table
-          </div>
-        </div>
-
-        <div class="bg-[#212d3b] p-3 rounded-xl border border-gray-800/80 shadow-sm">
-          <p class="text-[11px] font-medium text-gray-400">Daily Average</p>
-          <p id="kpiDailyAvg" class="text-xl font-bold text-cyan-300 mt-0.5">Loading...</p>
-          <p id="kpiDaysCount" class="text-[10px] text-gray-500 mt-1">Calculated daily burn</p>
-        </div>
-
-        <div class="bg-[#212d3b] p-3 rounded-xl border border-gray-800/80 shadow-sm">
-          <p class="text-[11px] font-medium text-gray-400">Budget Target</p>
-          <p id="kpiBudget" class="text-xl font-bold text-gray-200 mt-0.5">$3,000.00</p>
-          <p id="kpiBudgetRemaining" class="text-[10px] text-emerald-400 mt-1">Calculated remaining</p>
-        </div>
-
-        <div class="bg-[#212d3b] p-3 rounded-xl border border-gray-800/80 shadow-sm">
-          <p class="text-[11px] font-medium text-gray-400">Projected Savings</p>
-          <p id="kpiSavings" class="text-xl font-bold text-teal-300 mt-0.5">Loading...</p>
-          <p class="text-[10px] text-teal-400/80 mt-1">Based on target</p>
+    <!-- TOP 4 LIVE KPI BOXES -->
+    <div class="grid grid-cols-2 gap-2.5">
+      <div class="bg-[#212d3b] p-3 rounded-xl border border-gray-800/80 shadow-sm">
+        <p class="text-[11px] font-medium text-gray-400">Total Spent</p>
+        <p id="kpiTotal" class="text-xl font-bold text-white mt-0.5">Loading...</p>
+        <div class="mt-1 flex items-center text-[10px] text-cyan-400 font-medium">
+          <i data-lucide="database" class="w-3 h-3 mr-1"></i> Live from table
         </div>
       </div>
 
-      <!-- CATEGORY PIE CHART CARD -->
-      <div class="bg-[#212d3b] rounded-xl border border-gray-800/80 p-4 shadow-sm">
-        <h2 class="text-xs font-semibold text-gray-300 flex items-center gap-1.5 mb-3 border-b border-gray-800 pb-2">
-          <i data-lucide="pie-chart" class="w-3.5 h-3.5 text-cyan-400"></i>
-          Spending Breakdown by Category
-        </h2>
-        <div class="relative h-56 flex items-center justify-center">
-          <canvas id="categoryChart"></canvas>
-        </div>
+      <div class="bg-[#212d3b] p-3 rounded-xl border border-gray-800/80 shadow-sm">
+        <p class="text-[11px] font-medium text-gray-400">Daily Average</p>
+        <p id="kpiDailyAvg" class="text-xl font-bold text-cyan-300 mt-0.5">Loading...</p>
+        <p id="kpiDaysCount" class="text-[10px] text-gray-500 mt-1">Calculated daily burn</p>
+      </div>
+
+      <div class="bg-[#212d3b] p-3 rounded-xl border border-gray-800/80 shadow-sm">
+        <p class="text-[11px] font-medium text-gray-400">Budget Target</p>
+        <p id="kpiBudget" class="text-xl font-bold text-gray-200 mt-0.5">$3,000.00</p>
+        <p id="kpiBudgetRemaining" class="text-[10px] text-emerald-400 mt-1">Calculated remaining</p>
+      </div>
+
+      <div class="bg-[#212d3b] p-3 rounded-xl border border-gray-800/80 shadow-sm">
+        <p class="text-[11px] font-medium text-gray-400">Projected Savings</p>
+        <p id="kpiSavings" class="text-xl font-bold text-teal-300 mt-0.5">Loading...</p>
+        <p class="text-[10px] text-teal-400/80 mt-1">Based on target</p>
       </div>
     </div>
 
-    <!-- TAB 2: ITEMIZED LEDGER TAB -->
-    <div id="tabLedger" class="space-y-3 hidden">
-      <!-- SEARCH INPUT -->
+    <!-- CATEGORY PIE CHART CARD (INTERACTIVE) -->
+    <div class="bg-[#212d3b] rounded-xl border border-gray-800/80 p-4 shadow-sm">
+      <div class="flex items-center justify-between mb-3 border-b border-gray-800 pb-2">
+        <h2 class="text-xs font-semibold text-gray-300 flex items-center gap-1.5">
+          <i data-lucide="pie-chart" class="w-3.5 h-3.5 text-cyan-400"></i>
+          Spending by Category (Click slice to filter)
+        </h2>
+        <button onclick="clearCategoryFilter()" id="clearFilterBtn" class="hidden text-[10px] bg-cyan-950/80 text-cyan-300 border border-cyan-800 px-2 py-0.5 rounded-md hover:bg-cyan-900 transition-all">
+          Reset Filter
+        </button>
+      </div>
+      <div class="relative h-52 flex items-center justify-center">
+        <canvas id="categoryChart"></canvas>
+      </div>
+    </div>
+
+    <!-- SEARCH & ITEMIZED TRANSACTIONS SECTION -->
+    <div class="space-y-3">
       <div class="relative">
         <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
         <input 
@@ -123,17 +112,16 @@
         />
       </div>
 
-      <!-- ITEMIZED TRANSACTIONS LIST -->
       <div class="bg-[#212d3b] rounded-xl border border-gray-800/80 p-3.5 shadow-sm space-y-3">
         <div class="flex items-center justify-between border-b border-gray-800 pb-2">
           <h2 class="text-xs font-semibold text-gray-300 flex items-center gap-1.5">
             <i data-lucide="list-filter" class="w-3.5 h-3.5 text-cyan-400"></i>
-            Detailed Transactions Ledger
+            Itemized Transactions Ledger
           </h2>
           <span id="transactionCount" class="text-[10px] bg-gray-800 text-gray-300 px-2 py-0.5 rounded-full font-mono">0 items</span>
         </div>
 
-        <div id="transactionList" class="space-y-2 max-h-[450px] overflow-y-auto pr-1">
+        <div id="transactionList" class="space-y-2 max-h-80 overflow-y-auto pr-1">
           <div class="text-center py-6 text-xs text-gray-500">Connecting to database...</div>
         </div>
       </div>
@@ -152,25 +140,7 @@
     const telegramId = tg?.initDataUnsafe?.user?.id || '5794610680'; 
     let rawTransactions = [];
     let chartInstance = null;
-
-    function switchTab(tabName) {
-      const overviewTab = document.getElementById('tabOverview');
-      const ledgerTab = document.getElementById('tabLedger');
-      const overviewBtn = document.getElementById('tabOverviewBtn');
-      const ledgerBtn = document.getElementById('tabLedgerBtn');
-
-      if (tabName === 'overview') {
-        overviewTab.classList.remove('hidden');
-        ledgerTab.classList.add('hidden');
-        overviewBtn.className = "flex-1 py-1.5 text-xs font-semibold rounded-lg text-cyan-300 bg-[#212d3b] border border-cyan-500/30 transition-all flex items-center justify-center gap-1.5 shadow-sm";
-        ledgerBtn.className = "flex-1 py-1.5 text-xs font-semibold rounded-lg text-gray-400 hover:text-gray-200 transition-all flex items-center justify-center gap-1.5";
-      } else {
-        ledgerTab.classList.remove('hidden');
-        overviewTab.classList.add('hidden');
-        ledgerBtn.className = "flex-1 py-1.5 text-xs font-semibold rounded-lg text-cyan-300 bg-[#212d3b] border border-cyan-500/30 transition-all flex items-center justify-center gap-1.5 shadow-sm";
-        overviewBtn.className = "flex-1 py-1.5 text-xs font-semibold rounded-lg text-gray-400 hover:text-gray-200 transition-all flex items-center justify-center gap-1.5";
-      }
-    }
+    let selectedCategoryFilter = null;
 
     async function fetchAnalyticsData(monthStr) {
       try {
@@ -184,6 +154,8 @@
 
         const data = await res.json();
         rawTransactions = data.transactions || [];
+        selectedCategoryFilter = null; // reset filter on month change
+        document.getElementById('clearFilterBtn').classList.add('hidden');
         
         updateKPIs(data.kpis);
         renderCategoryPieChart(rawTransactions);
@@ -265,9 +237,30 @@
                 }
               }
             }
+          },
+          // INTERACTIVE CLICK EVENT FOR CHART SLICES & LEGENDS
+          onClick: (event, elements) => {
+            if (elements.length > 0) {
+              const index = elements[0].index;
+              const clickedCategory = labels[index];
+              
+              if (selectedCategoryFilter === clickedCategory) {
+                clearCategoryFilter();
+              } else {
+                selectedCategoryFilter = clickedCategory;
+                document.getElementById('clearFilterBtn').classList.remove('hidden');
+                renderTransactions(rawTransactions);
+              }
+            }
           }
         }
       });
+    }
+
+    function clearCategoryFilter() {
+      selectedCategoryFilter = null;
+      document.getElementById('clearFilterBtn').classList.add('hidden');
+      renderTransactions(rawTransactions);
     }
 
     function renderTransactions(items) {
@@ -278,10 +271,17 @@
       const filtered = items.filter(item => {
         const desc = (item.description || '').toLowerCase();
         const cat = (item.category || '').toLowerCase();
-        return desc.includes(searchVal) || cat.includes(searchVal);
+        
+        // Match search input & active category filter from pie chart click
+        const matchesSearch = desc.includes(searchVal) || cat.includes(searchVal);
+        const matchesCategory = selectedCategoryFilter ? item.category === selectedCategoryFilter : true;
+        
+        return matchesSearch && matchesCategory;
       });
 
-      document.getElementById('transactionCount').textContent = `${filtered.length} items`;
+      document.getElementById('transactionCount').textContent = selectedCategoryFilter 
+        ? `${filtered.length} items (${selectedCategoryFilter})` 
+        : `${filtered.length} items`;
 
       if (filtered.length === 0) {
         listEl.innerHTML = `<div class="text-center py-6 text-xs text-gray-500">No matching records found</div>`;
