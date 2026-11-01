@@ -45,12 +45,12 @@
       </div>
     </div>
 
+    <!-- Dropdown is now dynamically populated by JS -->
     <select id="monthSelect" onchange="fetchAnalyticsData(this.value)" class="bg-[#212d3b] text-xs font-medium text-cyan-300 border border-gray-700/60 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-cyan-400 transition-all cursor-pointer">
-      <!-- Dynamically populated by JavaScript -->
     </select>
   </header>
 
-  <!-- MAIN CONTAINER (SINGLE TAB) -->
+  <!-- MAIN CONTAINER -->
   <main class="max-w-lg mx-auto px-4 pt-3 space-y-4">
 
     <!-- TOP 4 LIVE KPI BOXES -->
@@ -82,7 +82,7 @@
       </div>
     </div>
 
-    <!-- CATEGORY PIE CHART CARD (INTERACTIVE) -->
+    <!-- CATEGORY PIE CHART CARD -->
     <div class="bg-[#212d3b] rounded-xl border border-gray-800/80 p-4 shadow-sm">
       <div class="flex items-center justify-between mb-3 border-b border-gray-800 pb-2">
         <h2 class="text-xs font-semibold text-gray-300 flex items-center gap-1.5">
@@ -143,54 +143,53 @@
 
     async function fetchAnalyticsData(monthStr) {
       try {
+        const payload = { telegram_id: telegramId };
+        if (monthStr) payload.month = monthStr; // Only pass if user selected one
+
         const res = await fetch(`${N8N_BASE_URL}/cashiq-analytics-data`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ telegram_id: telegramId, month: monthStr })
+          body: JSON.stringify(payload)
         });
-    
+
         if (!res.ok) throw new Error('Failed to fetch analytics');
-    
+
         const data = await res.json();
         rawTransactions = data.transactions || [];
         selectedCategoryFilter = null; 
         document.getElementById('clearFilterBtn').classList.add('hidden');
         
-        // 1. Populate dropdown dynamically if available_months are returned from n8n
+        // Dynamically build and populate the dropdown options from n8n response
         if (data.available_months && data.available_months.length > 0) {
           const selectEl = document.getElementById('monthSelect');
-          // Only rebuild if options haven't been built yet or list changed
-          if (selectEl.options.length !== data.available_months.length) {
-            selectEl.innerHTML = '';
-            data.available_months.forEach(m => {
-              const opt = document.createElement('option');
-              opt.value = m;
-              // Format "2026-11" to "Nov 2026"
-              opt.textContent = formatMonthLabel(m);
-              if (m === data.active_month) opt.selected = true;
-              selectEl.appendChild(opt);
-            });
-          }
+          selectEl.innerHTML = ''; // Clear out old options
+          data.available_months.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = formatMonthLabel(m); // Formats "2026-11" -> "Nov 2026"
+            if (m === data.active_month) opt.selected = true;
+            selectEl.appendChild(opt);
+          });
         }
-    
+
         updateKPIs(data.kpis);
         renderCategoryPieChart(rawTransactions);
         renderTransactions(rawTransactions);
-    
+
       } catch (err) {
         console.error(err);
         document.getElementById('transactionList').innerHTML = `<div class="text-center py-6 text-xs text-rose-400">Failed to load table data. Check n8n webhook.</div>`;
       }
     }
-    
-    // Helper to format "YYYY-MM" into "Mon YYYY" (e.g., "2026-11" -> "Nov 2026")
+
+    // Helper to format "YYYY-MM" into "Mon YYYY"
     function formatMonthLabel(monthStr) {
       const [year, month] = monthStr.split('-');
       const date = new Date(year, month - 1, 1);
       return date.toLocaleString('en-US', { month: 'short', year: 'numeric' });
     }
-    
-    // Initialize on load (passing no month lets n8n automatically pick the latest)
+
+    // Initialize on load WITHOUT arguments so n8n auto-detects the latest month (Nov 2026)
     window.onload = () => {
       fetchAnalyticsData();
     };
@@ -266,7 +265,6 @@
               }
             }
           },
-          // INTERACTIVE CLICK EVENT FOR CHART SLICES & LEGENDS
           onClick: (event, elements) => {
             if (elements.length > 0) {
               const index = elements[0].index;
@@ -300,7 +298,6 @@
         const desc = (item.description || '').toLowerCase();
         const cat = (item.category || '').toLowerCase();
         
-        // Match search input & active category filter from pie chart click
         const matchesSearch = desc.includes(searchVal) || cat.includes(searchVal);
         const matchesCategory = selectedCategoryFilter ? item.category === selectedCategoryFilter : true;
         
@@ -341,12 +338,6 @@
     function filterTransactions() {
       renderTransactions(rawTransactions);
     }
-
-    // Initialize on load
-    // Initialize on load (passing nothing allows n8n to auto-detect latest month)
-    window.onload = () => {
-      fetchAnalyticsData();
-    };
   </script>
 </body>
 </html>
