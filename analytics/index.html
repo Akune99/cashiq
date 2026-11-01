@@ -46,8 +46,7 @@
     </div>
 
     <select id="monthSelect" onchange="fetchAnalyticsData(this.value)" class="bg-[#212d3b] text-xs font-medium text-cyan-300 border border-gray-700/60 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-cyan-400 transition-all cursor-pointer">
-      <option value="2026-10" selected>Oct 2026</option>
-      <option value="2026-09">Sep 2026</option>
+      <!-- Dynamically populated by JavaScript -->
     </select>
   </header>
 
@@ -149,23 +148,52 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ telegram_id: telegramId, month: monthStr })
         });
-
+    
         if (!res.ok) throw new Error('Failed to fetch analytics');
-
+    
         const data = await res.json();
         rawTransactions = data.transactions || [];
-        selectedCategoryFilter = null; // reset filter on month change
+        selectedCategoryFilter = null; 
         document.getElementById('clearFilterBtn').classList.add('hidden');
         
+        // 1. Populate dropdown dynamically if available_months are returned from n8n
+        if (data.available_months && data.available_months.length > 0) {
+          const selectEl = document.getElementById('monthSelect');
+          // Only rebuild if options haven't been built yet or list changed
+          if (selectEl.options.length !== data.available_months.length) {
+            selectEl.innerHTML = '';
+            data.available_months.forEach(m => {
+              const opt = document.createElement('option');
+              opt.value = m;
+              // Format "2026-11" to "Nov 2026"
+              opt.textContent = formatMonthLabel(m);
+              if (m === data.active_month) opt.selected = true;
+              selectEl.appendChild(opt);
+            });
+          }
+        }
+    
         updateKPIs(data.kpis);
         renderCategoryPieChart(rawTransactions);
         renderTransactions(rawTransactions);
-
+    
       } catch (err) {
         console.error(err);
         document.getElementById('transactionList').innerHTML = `<div class="text-center py-6 text-xs text-rose-400">Failed to load table data. Check n8n webhook.</div>`;
       }
     }
+    
+    // Helper to format "YYYY-MM" into "Mon YYYY" (e.g., "2026-11" -> "Nov 2026")
+    function formatMonthLabel(monthStr) {
+      const [year, month] = monthStr.split('-');
+      const date = new Date(year, month - 1, 1);
+      return date.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+    }
+    
+    // Initialize on load (passing no month lets n8n automatically pick the latest)
+    window.onload = () => {
+      fetchAnalyticsData();
+    };
 
     function updateKPIs(kpis) {
       if (!kpis) return;
