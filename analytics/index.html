@@ -343,8 +343,9 @@
     }
 
     // Initialize on load
+    // Initialize on load (passing nothing allows n8n to auto-detect latest month)
     window.onload = () => {
-      fetchAnalyticsData('2026-10');
+      fetchAnalyticsData();
     };
   </script>
 </body>
