@@ -136,7 +136,7 @@
     const tg = window.Telegram?.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
 
-    const telegramId = tg?.initDataUnsafe?.user?.id || '5794610680'; 
+    const telegramId = tg?.initDataUnsafe?.user?.id || ''; 
     let rawTransactions = [];
     let chartInstance = null;
     let selectedCategoryFilter = null;
